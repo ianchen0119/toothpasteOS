@@ -2,6 +2,8 @@
 
 #define R(r) ((volatile uint32 *)(0x10001000 + (r)))
 
+/* For virtio */
+
 static struct disk
 {
   char pages[2 * PGSIZE];
