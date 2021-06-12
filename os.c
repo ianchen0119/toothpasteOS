@@ -1,5 +1,5 @@
 #include "os.h"
-
+#include "riscv.h"
 void os_kernel()
 {
 	task_os();
@@ -8,8 +8,9 @@ void os_kernel()
 void os_start()
 {
 	lib_puts("OS start\n");
-	user_init();
 	timer_init(); // start timer interrupt ...
+	user_init();
+	uart_init();
 }
 
 int current_task = 0;

@@ -8,9 +8,19 @@
 #define reg_t uint32_t // RISCV32: register is 32bits
 // define reg_t as uint64_t // RISCV64: register is 64bits
 
+#define UART_REG(reg) ((volatile uint8_t *)(UART + reg))
+#define UART_REGR(reg) (*(UART_REG(reg)))
+#define UART_REGW(reg, v) (*(UART_REG(reg)) = (v))
+
 // ref: https://www.activexperts.com/serial-port-component/tutorials/uart/
+#define UART_TX_BUF_SIZE 32
 #define UART 0x10000000
 #define UART_THR (uint8_t *)(UART + 0x00) // THR:transmitter holding register
+#define UART_RHR (uint8_t *)(UART + 0x00) // RHR:Receive holding register
+#define UART_DLL (uint8_t *)(UART + 0x00) // LSB of Divisor Latch (write mode)
+#define UART_DLM (uint8_t *)(UART + 0x01) // MSB of Divisor Latch (write mode)
+#define UART_IER (uint8_t *)(UART + 0x01) // Interrupt Enable Register
+#define UART_LCR (uint8_t *)(UART + 0x03) // Line Control Register
 #define UART_LSR (uint8_t *)(UART + 0x05) // LSR:line status register
 #define UART_LSR_EMPTY_MASK 0x40          // LSR Bit 6: Transmitter empty; both the THR and LSR are empty
 
@@ -60,6 +70,16 @@ static inline reg_t r_mhartid()
 #define MSTATUS_MPP_S (1 << 11)
 #define MSTATUS_MPP_U (0 << 11)
 #define MSTATUS_MIE (1 << 3) // machine-mode interrupt enable.
+
+// Supervisor Trap Cause
+static inline reg_t
+r_scause()
+{
+  reg_t x;
+  asm volatile("csrr %0, scause"
+               : "=r"(x));
+  return x;
+}
 
 static inline reg_t r_mstatus()
 {
