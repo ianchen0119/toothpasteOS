@@ -14,5 +14,6 @@ extern void task_go(int i);
 extern void task_os();
 extern int task_copy(int pid);
 extern void task_kill();
+extern void task_replace(void (*task)(void));
 
 #endif

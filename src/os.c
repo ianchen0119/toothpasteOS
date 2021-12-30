@@ -11,7 +11,7 @@ int get_current_task(){
 
 void panic(char *s){
 	lib_puts(s);
-	for (;;){}
+	for(;;){}
 }
 
 void os_kernel(){
@@ -38,7 +38,7 @@ int os_main(void){
 	disk_read();
 	page_test();
 	
-	while (1){
+	while(1){
 	  lib_puts("OS: Activate next task\n");
 	  task_go(current_task);
 	  lib_puts("OS: Back to OS\n");

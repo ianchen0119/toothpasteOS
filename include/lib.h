@@ -8,7 +8,7 @@
 #define lib_error(...)       \
   {                          \
     lib_printf(__VA_ARGS__); \
-    while (1)                \
+    while(1)                \
     {                        \
     }                        \
   }                          \

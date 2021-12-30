@@ -1,12 +1,11 @@
 #include "os.h"
 #include "user_api.h"
 
-typedef struct{
-	char path[20];
-	void (*task)(void);
-}user_app_t;
+user_app_t app_table[APP_NUM];
 
-user_app_t app_table[10];
+user_app_t* get_app_table(){
+	return app_table;
+}
 
 void show_info(){
 	lib_puts("Wellcome to toothpasteOS\n");

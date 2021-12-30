@@ -7,6 +7,14 @@ ctx_t ctx_tasks[MAX_TASK];
 ctx_t *ctx_now;
 int taskTop = 0; // total number of task
 
+void task_replace(void (*task)(void)){
+	int pid = get_current_task();
+	for(int j = 0; j < STACK_SIZE; j++){
+		task_stack[pid][j] = 0;
+	}
+	ctx_tasks[pid].ra = (reg_t)task;
+}
+
 void task_kill(){
 	taskTop--;
 	int pid = get_current_task();

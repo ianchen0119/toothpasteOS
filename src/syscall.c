@@ -2,19 +2,27 @@
 
 static int sys_gethid(unsigned int *ptr_hid){
 	lib_printf("--> sys_gethid, arg0 = 0x%x\n", ptr_hid);
-	if (ptr_hid == NULL) {
+	if(ptr_hid == NULL) {
 		lib_printf("ptr_hid == NULL\n");
        		return -1;
-	} else {
+	} else{
 		lib_printf("ptr_hid != NULL\n");
 		 *ptr_hid = r_mhartid();
  		 return 0;
 	}
 }
 
-static int sys_exec(){
-	// TODO: compare input value and app_table,
-	// If required file exists, then execute this file.
+static int sys_exec(char* file){
+	user_app_t app_table = get_app_table();
+	for(int i = 0; i < APP_NUM; i++){
+		if(strcmp(app_table[i].path, file) < 0){
+			continue;
+		}else{
+			task_replace(app_table[i].task);
+			return 0;
+		}
+	}
+	return -1;
 }
 
 static int sys_exit(){
@@ -40,6 +48,7 @@ void do_syscall(struct context *ctx)
 		break;
 	case 3:
 		// exec
+		ctx->a0 = sys_exec((char*)ctx->a0);
 		break;
 	case 4:
 		// exit
