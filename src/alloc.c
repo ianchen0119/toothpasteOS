@@ -52,7 +52,7 @@ static inline void _clear(struct Page *page)
 
 static inline int _is_free(struct Page *page)
 {
-  if(page->flags & PAGE_TAKEN)
+  if (page->flags & PAGE_TAKEN)
   {
     return 0;
   }
@@ -69,7 +69,7 @@ static inline void _set_flag(struct Page *page, uint8_t flags)
 
 static inline int _is_last(struct Page *page)
 {
-  if(page->flags & PAGE_LAST)
+  if (page->flags & PAGE_LAST)
   {
     return 1;
   }
@@ -95,7 +95,7 @@ void page_init()
   lib_printf("HEAP_START = %x, HEAP_SIZE = %x, num of pages = %d\n", HEAP_START, HEAP_SIZE, _num_pages);
 
   struct Page *page = (struct Page *)HEAP_START;
-  for(int i = 0; i < _num_pages; i++)
+  for (int i = 0; i < _num_pages; i++)
   {
     _clear(page);
     page++;
@@ -121,9 +121,9 @@ void *malloc(size_t size)
   int npages = pageNum(size);
   int found = 0;
   struct Page *page_i = (struct Page *)HEAP_START;
-  for(int i = 0; i < (_num_pages - npages); i++)
+  for (int i = 0; i < (_num_pages - npages); i++)
   {
-    if(_is_free(page_i))
+    if (_is_free(page_i))
     {
       found = 1;
 
@@ -133,9 +133,9 @@ void *malloc(size_t size)
 			 */
 
       struct Page *page_j = page_i;
-      for(int j = i; j < (i + npages); j++)
+      for (int j = i; j < (i + npages); j++)
       {
-        if(!_is_free(page_j))
+        if (!_is_free(page_j))
         {
           found = 0;
           break;
@@ -147,10 +147,10 @@ void *malloc(size_t size)
 			 * take housekeeping, then return the actual start
 			 * address of the first page of this memory block
 			 */
-      if(found)
+      if (found)
       {
         struct Page *page_k = page_i;
-        for(int k = i; k < (i + npages); k++)
+        for (int k = i; k < (i + npages); k++)
         {
           _set_flag(page_k, PAGE_TAKEN);
           page_k++;
@@ -174,7 +174,7 @@ void free(void *p)
   /*
 	 * Assert (TBD) ifp is invalid
 	 */
-  if(!p || (uint32_t)p >= _alloc_end)
+  if (!p || (uint32_t)p >= _alloc_end)
   {
     return;
   }
@@ -182,9 +182,9 @@ void free(void *p)
   struct Page *page = (struct Page *)HEAP_START;
   page += ((uint32_t)p - _alloc_start) / PAGE_SIZE;
   /* loop and clear all the page descriptors of the memory block */
-  while(!_is_free(page))
+  while (!_is_free(page))
   {
-    if(_is_last(page))
+    if (_is_last(page))
     {
       _clear(page);
       break;

@@ -2,38 +2,47 @@
 #include "riscv.h"
 extern void trap_vector();
 extern void virtio_disk_isr();
-extern void do_syscall(struct context *ctx);
+extern void do_syscall(struct context *ctx, uint32_t *pc);
 
-void trap_init(){
+void trap_init()
+{
   // set the machine-mode trap handler.
   w_mtvec((reg_t)trap_vector);
 }
 
-void external_handler(){
+void external_handler()
+{
   int irq = plic_claim();
-  if(irq == UART0_IRQ){
-    lib_isr();
+  if (irq == UART0_IRQ)
+  {
+    // lib_isr();
   }
-  else if(irq == VIRTIO_IRQ){
+  else if (irq == VIRTIO_IRQ)
+  {
     lib_puts("Virtio IRQ\n");
     virtio_disk_isr();
   }
-  else if(irq){
+  else if (irq)
+  {
     lib_printf("unexpected interrupt irq = %d\n", irq);
   }
 
-  if(irq){
+  if (irq)
+  {
     plic_complete(irq);
   }
 }
 
-reg_t trap_handler(reg_t epc, reg_t cause, struct context *ctx){
+reg_t trap_handler(reg_t epc, reg_t cause, struct context *ctx)
+{
   reg_t return_pc = epc;
   reg_t cause_code = cause & 0xfff;
 
-  if(cause & 0x80000000){
+  if (cause & 0x80000000)
+  {
     /* Asynchronous trap - interrupt */
-    switch (cause_code){
+    switch (cause_code)
+    {
     case 3:
       /* software interruption */
       break;
@@ -55,8 +64,10 @@ reg_t trap_handler(reg_t epc, reg_t cause, struct context *ctx){
       break;
     }
   }
-  else{
-    switch (cause_code){
+  else
+  {
+    switch (cause_code)
+    {
     case 2:
       lib_puts("Illegal instruction!\n");
       break;
@@ -67,14 +78,12 @@ reg_t trap_handler(reg_t epc, reg_t cause, struct context *ctx){
       lib_puts("Fault store!\n");
       break;
     case 8:
-        lib_puts("Environment call from U-mode!\n");
-        do_syscall(ctx);
-        return_pc += 4;
-        break;
+      lib_puts("Environment call from U-mode!\n");
+      do_syscall(ctx, &return_pc);
+      break;
     case 11:
-        lib_puts("Environment call from M-mode!\n");
-        do_syscall(ctx);
-	return_pc += 4;
+      lib_puts("Environment call from M-mode!\n");
+      do_syscall(ctx, &return_pc);
       break;
     default:
       /* Synchronous trap - exception */

@@ -5,7 +5,8 @@ reg_t timer_scratch[NCPU][5];
 
 #define interval 20000000 // cycles; about 2 second in qemu.
 
-void timer_init(){
+void timer_init()
+{
   // each CPU has a separate source of timer interrupts.
   int id = r_mhartid();
 
@@ -29,7 +30,8 @@ void timer_init(){
 
 static int timer_count = 0;
 
-void timer_handler(){
+void timer_handler()
+{
   lib_printf("timer_handler: %d\n", ++timer_count);
   int id = r_mhartid();
   //lib_printf("hid: %d\n", id);

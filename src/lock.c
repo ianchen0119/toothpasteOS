@@ -7,9 +7,9 @@ void lock_init(lock_t *lock)
 
 void lock_acquire(lock_t *lock)
 {
-  for(;;)
+  for (;;)
   {
-    if(!atomic_swap(lock))
+    if (!atomic_swap(lock))
     {
       break;
     }

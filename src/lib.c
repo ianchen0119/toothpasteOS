@@ -3,7 +3,8 @@
 #define LSR_RX_READY (1 << 0)
 #define EOF 0
 
-void uart_init(){
+void uart_init()
+{
     /* disable interrupts */
     UART_REGW(UART_IER, 0x00);
 
@@ -20,61 +21,82 @@ void uart_init(){
     UART_REGW(UART_IER, ier | (1 << 0));
 }
 
-char *lib_gets(char *s){
+char *lib_gets(char *s)
+{
+    w_mie(r_mie() ^ MIE_MTIE);
     int ch;
     char *p = s;
 
-    while((ch = lib_getc()) != '\n' && ch != EOF){
-        if(ch == -1){
+    while ((ch = lib_getc()) != '\n' && ch != EOF)
+    {
+        if (ch == -1)
+        {
             continue;
         }
         *s = (char)ch;
+        lib_putc((char)ch);
         s++;
     }
 
     *s = '\0';
+    lib_putc('\n');
     return p;
 }
 
-int lib_getc(void){
-    if(*UART_LSR & LSR_RX_READY){
+int lib_getc(void)
+{
+    if (*UART_LSR & LSR_RX_READY)
+    {
         return *UART_RHR == '\r' ? '\n' : *UART_RHR;
     }
-    else{
+    else
+    {
         return -1;
     }
 }
 
-void lib_isr(void){
-    for(;;){
+void lib_isr(void)
+{
+    for (;;)
+    {
         int c = lib_getc();
-        if(c == -1){
+        if (c == -1)
+        {
             break;
         }
-        else{
+        else
+        {
             lib_putc((char)c);
-            lib_putc('\n');
         }
     }
 }
 
-void lib_delay(volatile int count){
+void lib_delay(volatile int count)
+{
     count *= 50000;
-    while(count--)
+    while (count--)
         ;
 }
 
 int lib_putc(char ch)
 {
-    while((*UART_LSR & UART_LSR_EMPTY_MASK) == 0)
+    while ((*UART_LSR & UART_LSR_EMPTY_MASK) == 0)
         ;
     return *UART_THR = ch;
 }
 
 void lib_puts(char *s)
 {
-    while(*s)
+    while (*s)
         lib_putc(*s++);
+}
+
+void debug_lib_puts(char *s)
+{
+#ifdef DEBUG
+    while (*s)
+        lib_putc(*s++);
+#endif
 }
 
 int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
@@ -82,9 +104,12 @@ int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
     int format = 0;
     int longarg = 0;
     size_t pos = 0;
-    for(; *s; s++){
-        if(format){
-            switch(*s){
+    for (; *s; s++)
+    {
+        if (format)
+        {
+            switch (*s)
+            {
             case 'l':
             {
                 longarg = 1;
@@ -93,11 +118,13 @@ int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
             case 'p':
             {
                 longarg = 1;
-                if(out && pos < n){
+                if (out && pos < n)
+                {
                     out[pos] = '0';
                 }
                 pos++;
-                if(out && pos < n){
+                if (out && pos < n)
+                {
                     out[pos] = 'x';
                 }
                 pos++;
@@ -106,9 +133,11 @@ int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
             {
                 long num = longarg ? va_arg(vl, long) : va_arg(vl, int);
                 int hexdigits = 2 * (longarg ? sizeof(long) : sizeof(int)) - 1;
-                for(int i = hexdigits; i >= 0; i--){
+                for (int i = hexdigits; i >= 0; i--)
+                {
                     int d = (num >> (4 * i)) & 0xF;
-                    if(out && pos < n){
+                    if (out && pos < n)
+                    {
                         out[pos] = (d < 10 ? '0' + d : 'a' + d - 10);
                     }
                     pos++;
@@ -120,18 +149,22 @@ int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
             case 'd':
             {
                 long num = longarg ? va_arg(vl, long) : va_arg(vl, int);
-                if(num < 0){
+                if (num < 0)
+                {
                     num = -num;
-                    if(out && pos < n){
+                    if (out && pos < n)
+                    {
                         out[pos] = '-';
                     }
                     pos++;
                 }
                 long digits = 1;
-                for(long nn = num; nn /= 10; digits++)
+                for (long nn = num; nn /= 10; digits++)
                     ;
-                for(int i = digits - 1; i >= 0; i--){
-                    if(out && pos + i < n){
+                for (int i = digits - 1; i >= 0; i--)
+                {
+                    if (out && pos + i < n)
+                    {
                         out[pos + i] = '0' + (num % 10);
                     }
                     num /= 10;
@@ -144,8 +177,10 @@ int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
             case 's':
             {
                 const char *s2 = va_arg(vl, const char *);
-                while(*s2){
-                    if(out && pos < n){
+                while (*s2)
+                {
+                    if (out && pos < n)
+                    {
                         out[pos] = *s2;
                     }
                     pos++;
@@ -157,7 +192,8 @@ int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
             }
             case 'c':
             {
-                if(out && pos < n){
+                if (out && pos < n)
+                {
                     out[pos] = (char)va_arg(vl, int);
                 }
                 pos++;
@@ -169,20 +205,25 @@ int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
                 break;
             }
         }
-        else if(*s == '%'){
+        else if (*s == '%')
+        {
             format = 1;
         }
-        else{
-            if(out && pos < n){
+        else
+        {
+            if (out && pos < n)
+            {
                 out[pos] = *s;
             }
             pos++;
         }
     }
-    if(out && pos < n){
+    if (out && pos < n)
+    {
         out[pos] = 0;
     }
-    else if(out && n){
+    else if (out && n)
+    {
         out[n - 1] = 0;
     }
     return pos;
@@ -190,11 +231,14 @@ int lib_vsnprintf(char *out, size_t n, const char *s, va_list vl)
 
 static char out_buf[1000]; // buffer forlib_vprintf()
 
-int lib_vprintf(const char *s, va_list vl){
+int lib_vprintf(const char *s, va_list vl)
+{
     int res = lib_vsnprintf(NULL, -1, s, vl);
-    if(res + 1 >= sizeof(out_buf)){
+    if (res + 1 >= sizeof(out_buf))
+    {
         lib_puts("error: lib_vprintf() output string size overflow\n");
-        while(1){
+        while (1)
+        {
         }
     }
     lib_vsnprintf(out_buf, res + 1, s, vl);
@@ -202,7 +246,8 @@ int lib_vprintf(const char *s, va_list vl){
     return res;
 }
 
-int lib_printf(const char *s, ...){
+int lib_printf(const char *s, ...)
+{
     int res = 0;
     va_list vl;
     va_start(vl, s);

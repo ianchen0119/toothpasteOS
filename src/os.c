@@ -5,24 +5,31 @@ extern void trap_init(void);
 
 static int current_task = 0;
 
-int get_current_task(){
+int get_current_task()
+{
 	return current_task;
 }
 
-void panic(char *s){
+void panic(char *s)
+{
 	lib_puts(s);
-	for(;;){}
+	for (;;)
+	{
+	}
 }
 
-void os_kernel(){
+void os_kernel()
+{
 	task_os();
 }
 
-void disk_read(){
+void disk_read()
+{
 	virtio_tester(0);
 }
 
-void os_start(){
+void os_start()
+{
 	uart_init();
 	page_init();
 	lib_puts("OS start\n");
@@ -33,17 +40,19 @@ void os_start(){
 	timer_init(); // start timer interrupt ...
 }
 
-int os_main(void){
+int os_main(void)
+{
 	os_start();
 	disk_read();
 	page_test();
-	
-	while(1){
-	  lib_puts("OS: Activate next task\n");
-	  task_go(current_task);
-	  lib_puts("OS: Back to OS\n");
-	  current_task = (current_task + 1) % taskTop; // Round Robin Scheduling
-	  lib_puts("\n");
+
+	while (1)
+	{
+		debug_lib_puts("OS: Activate next task\n");
+		task_go(current_task);
+		debug_lib_puts("OS: Back to OS\n");
+		current_task = (current_task + 1) % taskTop; // Round Robin Scheduling
+		debug_lib_puts("\n");
 	}
 	return 0;
 }

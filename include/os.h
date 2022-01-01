@@ -24,16 +24,18 @@ extern void plic_complete(int);
 extern void basic_lock();
 extern void basic_unlock();
 
-typedef struct lock{
-  volatile int locked;
+typedef struct lock
+{
+	volatile int locked;
 } lock_t;
 
-typedef struct{
+typedef struct
+{
 	char path[20];
 	void (*task)(void);
-}user_app_t;
+} user_app_t;
 
-extern user_app_t* get_app_table();
+extern user_app_t *get_app_table();
 
 #define APP_NUM 10
 

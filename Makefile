@@ -20,7 +20,7 @@ $(SOURCE)string.c \
 $(SOURCE)alloc.c \
 $(SOURCE)syscall.c \
 $(SOURCE)usys.s \
-$(SOURCE)sh.s \
+$(SOURCE)sh.c \
 
 QEMU = qemu-system-riscv32
 QFLAGS = -nographic -smp 4 -machine virt -bios none
