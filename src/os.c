@@ -10,6 +10,11 @@ int get_current_task()
 	return current_task;
 }
 
+void set_current_task(int n)
+{
+	current_task = n;
+}
+
 void panic(char *s)
 {
 	lib_puts(s);
@@ -48,10 +53,11 @@ int os_main(void)
 
 	while (1)
 	{
-		debug_lib_puts("OS: Activate next task\n");
+		lib_puts("OS: Activate next task\n");
 		task_go(current_task);
-		debug_lib_puts("OS: Back to OS\n");
+		lib_puts("OS: Back to OS\n");
 		current_task = (current_task + 1) % taskTop; // Round Robin Scheduling
+		lib_printf("task %d\n", current_task);
 		debug_lib_puts("\n");
 	}
 	return 0;

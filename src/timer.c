@@ -32,7 +32,7 @@ static int timer_count = 0;
 
 void timer_handler()
 {
-  lib_printf("timer_handler: %d\n", ++timer_count);
+  // lib_printf("timer_handler: %d\n", ++timer_count);
   int id = r_mhartid();
   //lib_printf("hid: %d\n", id);
   *(reg_t *)CLINT_MTIMECMP(id) = *(reg_t *)CLINT_MTIME + interval;

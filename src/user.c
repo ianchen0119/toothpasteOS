@@ -109,5 +109,6 @@ void user_task4(void)
 void user_init()
 {
 	user_app_subscribe();
+	task_create(&user_task1);
 	task_create(&sh);
 }

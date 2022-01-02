@@ -23,7 +23,7 @@ void uart_init()
 
 char *lib_gets(char *s)
 {
-    w_mie(r_mie() ^ MIE_MTIE);
+    w_mie(r_mie() & ~(1 << 7));
     int ch;
     char *p = s;
 

@@ -109,14 +109,26 @@
         lw t6, 120(\base)
 .endm
 # ============ Macro END   ==================
- 
+
+.text
+
+#  extern sys_exg(ctx_t *sour, ctx_t *dest, ctx_t *temp);
+
+.global sys_exg
+.align 4
+sys_exg:
+# a0 = source, a1 = destination, a2 = temp
+        ctx_save a2
+        ctx_load a0
+        ctx_save a1
+        ctx_load a2
+        ret
+
 # Context switch
 #
 #   void sys_switch(struct context *old, struct context *new);
 # 
 # Save current registers in old. Load from new.
-
-.text
 
 .globl sys_switch
 .align 4

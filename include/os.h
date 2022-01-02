@@ -14,6 +14,7 @@ extern void user_init();
 extern void os_kernel();
 extern int os_main(void);
 extern int get_current_task(void);
+extern void set_current_task(int n);
 
 // PLIC
 extern void plic_init();

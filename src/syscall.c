@@ -1,5 +1,5 @@
 #include "os.h"
-
+#include "riscv.h"
 static int sys_gethid(unsigned int *ptr_hid)
 {
 	lib_printf("--> sys_gethid, arg0 = 0x%x\n", ptr_hid);
@@ -34,7 +34,7 @@ static int sys_exec(char *file, uint32_t *pc)
 	return -1;
 }
 
-static int sys_exit()
+static void sys_exit()
 {
 	task_kill();
 }
@@ -55,23 +55,25 @@ void do_syscall(struct context *ctx, uint32_t *pc)
 		 *	child process: 0
 		 *  parent process: pid of child process
 		 */
-		ctx->a0 = task_copy(ppid);
+		ctx->a0 = task_copy(ppid, pc);
 		break;
 	case 3:
 		// exec
 		ctx->a0 = sys_exec((char *)ctx->a0, pc);
+		goto ret;
 		break;
 	case 4:
 		// exit
 		sys_exit();
+		*pc = &os_kernel;
+		goto ret;
 		break;
 	default:
 		lib_printf("Unknown syscall no: %d\n", syscall_num);
 		ctx->a0 = -1;
 	}
-	if (syscall_num != 3)
-	{
-		*pc = *pc + 4;
-	}
+
+	*pc = *pc + 4;
+ret:
 	return;
 }

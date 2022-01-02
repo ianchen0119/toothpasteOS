@@ -4,6 +4,13 @@
 
 ![](https://scontent-xsp1-3.xx.fbcdn.net/v/t1.15752-9/183092595_375882037031357_7829933342069142265_n.jpg?_nc_cat=107&ccb=1-3&_nc_sid=ae9488&_nc_ohc=dsB1iBDsGPYAX_vCsAF&_nc_ht=scontent-xsp1-3.xx&oh=6c0128f0557dbf97261610b4295fc9b5&oe=60B88963)
 
+## system call
+
+- [x] gethid
+- [ ] fork
+- [x] exec
+- [x] exit
+
 ## Reference
 
 - [mini-riscv-os](https://github.com/cccriscv/mini-riscv-os)

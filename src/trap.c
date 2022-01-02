@@ -72,10 +72,12 @@ reg_t trap_handler(reg_t epc, reg_t cause, struct context *ctx)
       lib_puts("Illegal instruction!\n");
       break;
     case 5:
-      lib_puts("Fault load!\n");
+      // Fault load!
+      return_pc = return_pc + 4;
       break;
     case 7:
-      lib_puts("Fault store!\n");
+      // Fault store!
+      return_pc = return_pc + 4;
       break;
     case 8:
       lib_puts("Environment call from U-mode!\n");

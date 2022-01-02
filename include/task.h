@@ -12,7 +12,7 @@ extern int taskTop;
 extern int task_create(void (*task)(void));
 extern void task_go(int i);
 extern void task_os();
-extern int task_copy(int pid);
+extern int task_copy(int pid, uint32_t *pc);
 extern void task_kill();
 
 #endif

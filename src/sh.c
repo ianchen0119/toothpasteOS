@@ -16,7 +16,10 @@ void sh()
         {
             // child process
             lib_printf("child pid: %d\n", pid);
-            exec(input);
+            if (exec(input) < 0)
+            {
+                exit();
+            }
         }
         else
         {

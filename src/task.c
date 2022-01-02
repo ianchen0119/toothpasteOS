@@ -1,33 +1,35 @@
 #include "task.h"
 #include "os.h"
 
+extern sys_exg(ctx_t *sour, ctx_t *dest, ctx_t *temp);
+
 uint8_t task_stack[MAX_TASK][STACK_SIZE];
 ctx_t ctx_os;
 ctx_t ctx_tasks[MAX_TASK];
+ctx_t ctx_temp;
 ctx_t *ctx_now;
+
 int taskTop = 0; // total number of task
 
 void task_kill()
 {
-	taskTop--;
-	// int pid = get_current_task();
-	// for (int j = 0; j < STACK_SIZE; j++)
-	// {
-	// 	task_stack[pid][j] = 0;
-	// }
-	// ctx_tasks[pid].ra = NULL;
-	// ctx_tasks[pid].sp = NULL;
+	int i = get_current_task();
+	sys_exg(&(ctx_tasks[(i + 1) % taskTop]), &(ctx_tasks[i]), &ctx_temp);
+	taskTop = taskTop - 1;
+	set_current_task(-1);
 }
 
-int task_copy(int pid)
+int task_copy(int pid, uint32_t *pc)
 {
 	int i = taskTop++;
-	ctx_tasks[i].ra = ctx_tasks[pid].ra;
+	// sys_exg(&(ctx_tasks[pid]), &(ctx_tasks[i]), &ctx_temp);
+	// ctx_tasks[i] = ctx_tasks[pid];
+	ctx_tasks[i].sp = (reg_t)&task_stack[i][STACK_SIZE - 1];
 	for (int j = 0; j < STACK_SIZE; j++)
 	{
 		task_stack[i][j] = task_stack[pid][j];
 	}
-	ctx_tasks[i].sp = (reg_t)&task_stack[i][STACK_SIZE - 1];
+	ctx_tasks[i].ra = *pc - 4;
 	ctx_tasks[i].a0 = 0; // return value of child process must be zero
 	return i;
 }
