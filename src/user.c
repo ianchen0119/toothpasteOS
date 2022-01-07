@@ -35,7 +35,7 @@ void user_app_init()
 	}
 }
 
-void user_app_subscribe(char *path, void (*task)(void))
+void user_app_register(char *path, void (*task)(void))
 {
 	for (int i = 0; i < APP_NUM; i++)
 	{
@@ -51,7 +51,7 @@ void user_app_subscribe(char *path, void (*task)(void))
 void user_init()
 {
 	user_app_init();
-	user_app_subscribe("info", &show_info);
-	user_app_subscribe("clear", &clear);
+	user_app_register("info", &show_info);
+	user_app_register("clear", &clear);
 	task_create(&sh);
 }
