@@ -1,5 +1,16 @@
 #include "string.h"
 
+int strlen(char *s)
+{
+  int i = 0;
+  while (*s)
+  {
+    i++;
+    s++;
+  }
+  return i;
+}
+
 int strcmp(char *s, char *d)
 {
   while (*s != '\0' && *d != '\0')

@@ -6,6 +6,7 @@
 #include "task.h"
 #include "timer.h"
 #include "string.h"
+#include "user_api.h"
 
 extern void sh();
 

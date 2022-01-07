@@ -37,7 +37,7 @@ void os_start()
 {
 	uart_init();
 	page_init();
-	lib_puts("OS start\n");
+	lib_puts("OS start!\n");
 	user_init();
 	trap_init();
 	plic_init();
@@ -48,17 +48,16 @@ void os_start()
 int os_main(void)
 {
 	os_start();
-	disk_read();
-	page_test();
+	// disk_read();
+	// page_test();
 
 	while (1)
 	{
-		lib_puts("OS: Activate next task\n");
+		debug_lib_puts("OS: Activate next task\n");
 		task_go(current_task);
-		lib_puts("OS: Back to OS\n");
+		debug_lib_puts("OS: Back to OS\n");
 		current_task = (current_task + 1) % taskTop; // Round Robin Scheduling
-		lib_printf("task %d\n", current_task);
-		debug_lib_puts("\n");
+		debug_lib_puts("task %d\n", current_task);
 	}
 	return 0;
 }

@@ -112,11 +112,11 @@
 
 .text
 
-#  extern sys_exg(ctx_t *sour, ctx_t *dest, ctx_t *temp);
+#  extern sys_move(ctx_t *sour, ctx_t *dest, ctx_t *temp);
 
-.global sys_exg
+.global sys_move
 .align 4
-sys_exg:
+sys_move:
 # a0 = source, a1 = destination, a2 = temp
         ctx_save a2
         ctx_load a0
@@ -134,8 +134,8 @@ sys_exg:
 .align 4
 sys_switch:
 
-        ctx_save a0  # a0 => struct context *old
-        ctx_load a1  # a1 => struct context *new
+        reg_save a0  # a0 => struct context *old
+        reg_load a1  # a1 => struct context *new
         
 	ret          # pc=ra; swtch to new task (new->ra)
 

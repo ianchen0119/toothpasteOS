@@ -43,7 +43,7 @@ void do_syscall(struct context *ctx, uint32_t *pc)
 {
 	uint32_t syscall_num = ctx->a7;
 	int ppid = get_current_task();
-	lib_printf("syscall_num: %d\n", syscall_num);
+	debug_lib_puts("syscall_num: %d\n", syscall_num);
 	switch (syscall_num)
 	{
 	case 1:

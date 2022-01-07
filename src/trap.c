@@ -80,11 +80,11 @@ reg_t trap_handler(reg_t epc, reg_t cause, struct context *ctx)
       return_pc = return_pc + 4;
       break;
     case 8:
-      lib_puts("Environment call from U-mode!\n");
+      debug_lib_puts("Environment call from U-mode!\n");
       do_syscall(ctx, &return_pc);
       break;
     case 11:
-      lib_puts("Environment call from M-mode!\n");
+      debug_lib_puts("Environment call from M-mode!\n");
       do_syscall(ctx, &return_pc);
       break;
     default:

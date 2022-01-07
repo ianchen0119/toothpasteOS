@@ -1,7 +1,7 @@
 #include "task.h"
 #include "os.h"
 
-extern sys_exg(ctx_t *sour, ctx_t *dest, ctx_t *temp);
+extern sys_move(ctx_t *sour, ctx_t *dest, ctx_t *temp);
 
 uint8_t task_stack[MAX_TASK][STACK_SIZE];
 ctx_t ctx_os;
@@ -14,7 +14,7 @@ int taskTop = 0; // total number of task
 void task_kill()
 {
 	int i = get_current_task();
-	sys_exg(&(ctx_tasks[(i + 1) % taskTop]), &(ctx_tasks[i]), &ctx_temp);
+	sys_move(&(ctx_tasks[(i + 1) % taskTop]), &(ctx_tasks[i]), &ctx_temp);
 	taskTop = taskTop - 1;
 	set_current_task(-1);
 }
@@ -22,7 +22,7 @@ void task_kill()
 int task_copy(int pid, uint32_t *pc)
 {
 	int i = taskTop++;
-	// sys_exg(&(ctx_tasks[pid]), &(ctx_tasks[i]), &ctx_temp);
+	// sys_move(&(ctx_tasks[pid]), &(ctx_tasks[i]), &ctx_temp);
 	// ctx_tasks[i] = ctx_tasks[pid];
 	ctx_tasks[i].sp = (reg_t)&task_stack[i][STACK_SIZE - 1];
 	for (int j = 0; j < STACK_SIZE; j++)
@@ -38,6 +38,10 @@ int task_copy(int pid, uint32_t *pc)
 int task_create(void (*task)(void))
 {
 	int i = taskTop++;
+	if (i >= MAX_TASK)
+	{
+		return -1;
+	}
 	ctx_tasks[i].ra = (reg_t)task;
 	// ctx_tasks[i].pc = (reg_t)task;
 	ctx_tasks[i].sp = (reg_t)&task_stack[i][STACK_SIZE - 1];

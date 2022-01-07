@@ -3,7 +3,7 @@
 // a scratch area per CPU for machine-mode timer interrupts.
 reg_t timer_scratch[NCPU][5];
 
-#define interval 20000000 // cycles; about 2 second in qemu.
+#define interval 2000000 // cycles; about 0.2 second in qemu.
 
 void timer_init()
 {
